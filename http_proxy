@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+apt update &&
+#  apt install unattended-upgrades &&
+apt install python3-pip -y &&
+pip3 install pproxy &&
+pip3 install pproxy[accelerated] &&
+apt install supervisor -y &&
+(
+cat <<EOF >/etc/supervisor/conf.d/spotify6_proxy_server.conf
+[program:spotify6_proxy_server]
+command=/usr/local/bin/pproxy -l http://:56345#spotify6_proxy_server:spotify6_proxy_server -vv
+autostart=true
+autorestart=true 
+EOF
+  )
+supervisorctl reread
+supervisorctl update
